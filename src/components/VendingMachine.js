@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductForm from "./ProductForm";
 
 const VendingMachine = () => {
@@ -6,10 +6,16 @@ const VendingMachine = () => {
   const [products, setProducts] = useState([]);
 
   const saveProducts = () => {
-    const productsObj = JSON.stringify(products);
-    window.localStorage.setItem("product", productsObj);
     setStep("running");
   };
+
+  useEffect(() => {
+    if (products.length) {
+      const productsObj = JSON.stringify(products);
+      window.localStorage.setItem("product", productsObj);
+    }
+  }, [products]);
+
   const Render = () => {
     switch (step) {
       case "setting": {
@@ -36,8 +42,11 @@ const VendingMachine = () => {
           // 각 사용자 별 자판기 사용 기능
         );
       }
+      default:
+        return null;
     }
   };
+
   return <div>{Render()}</div>;
 };
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ProductForm from "./ProductForm";
+import Product from "./Product";
 
 const VendingMachine = () => {
   const [step, setStep] = useState("setting");
@@ -23,13 +24,11 @@ const VendingMachine = () => {
           <div className="product-set__container">
             <div className="title">상품 목록 설정</div>
             <ProductForm products={products} setProducts={setProducts} />
-            {products.map((product) => (
-              <div className="products-preview__container" key={product.id}>
-                <div>{product.name}</div>
-                <div>{product.price}원</div>
-                <div>{product.current}개</div>
-              </div>
-            ))}
+            <div className="products__container">
+              {products.map((product) => (
+                <Product key={product.id} product={product} />
+              ))}
+            </div>
             <button className="product-set__button" onClick={saveProducts}>
               설정 완료
             </button>

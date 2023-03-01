@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import * as xlsx from "xlsx";
+import useProducts from "../hooks/useProducts";
 import useUsers from "../hooks/useUsers";
 import Product from "./Product";
 import ProductForm from "./ProductForm";
@@ -8,12 +9,12 @@ import { moneyOptions, MESSAGE } from "../shared/Constants";
 
 const VendingMachine = () => {
   const [step, setStep] = useState("setting");
-  const [products, setProducts] = useState([]);
   const [currentMoney, setCurrentMoney] = useState(0);
   const [purchaseDetails, setPurchaseDetails] = useState([]);
   const [counter, setCounter] = useState({ user: [], product: [] });
   const [userRanking, setUserRanking] = useState([]);
   const [productRanking, setProductRanking] = useState([]);
+  const { products, setProducts, productsUpdate } = useProducts();
   const { users, currentUser, appear, appearChanger, userChange, userUpdate } = useUsers();
 
   const saveProducts = () => {
@@ -78,22 +79,6 @@ const VendingMachine = () => {
       time: `${year}/${month}/${date} ${hour}:${minute}`,
     });
     setPurchaseDetails(newPurchaseDetails);
-  };
-
-  const productsUpdate = (order) => {
-    const newProducts = [...products];
-    if (order.name === "sell") newProducts[order.index].current -= 1;
-    if (order.name === "initialization") {
-      newProducts.forEach((newProduct) => {
-        if (newProduct.current !== newProduct.amount) newProduct.current = newProduct.amount;
-      });
-    }
-    if (order.name === "priceIncrease") {
-      order.target.forEach((target) => {
-        newProducts[target].price += 100;
-      });
-    }
-    setProducts(newProducts);
   };
 
   const injectionMoney = (moneyOption) => {
@@ -163,13 +148,6 @@ const VendingMachine = () => {
     setStep("running");
     userUpdate({ name: "restart", money: 10000 });
   };
-
-  useEffect(() => {
-    if (products.length) {
-      const productsObj = JSON.stringify(products);
-      window.localStorage.setItem("product", productsObj);
-    }
-  }, [products]);
 
   const Render = () => {
     switch (step) {

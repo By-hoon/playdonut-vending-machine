@@ -11,6 +11,8 @@ const VendingMachine = () => {
   const [currentMoney, setCurrentMoney] = useState(0);
   const [purchaseDetails, setPurchaseDetails] = useState([]);
   const [counter, setCounter] = useState({ user: [], product: [] });
+  const [userRanking, setUserRanking] = useState([]);
+  const [productRanking, setProductRanking] = useState([]);
   const { users, currentUser, appear, appearChanger, userChange, userUpdate } = useUsers();
 
   const saveProducts = () => {
@@ -34,10 +36,10 @@ const VendingMachine = () => {
   const counterInitialization = () => {
     const newCounter = JSON.parse(JSON.stringify(counter));
     users.forEach((user) => {
-      if (user.id !== "owner") newCounter.user[user.id - 1] = [user.name, 0];
+      if (user.id !== "owner") newCounter.user[user.id - 1] = [user.name, 0, user.id];
     });
     products.forEach((product) => {
-      newCounter.product[product.id] = [product.name, 0];
+      newCounter.product[product.id] = [product.name, 0, product.id];
     });
     setCounter(newCounter);
   };
@@ -84,6 +86,11 @@ const VendingMachine = () => {
         if (newProduct.current !== newProduct.amount) newProduct.current = newProduct.amount;
       });
     }
+    if (order.name === "priceIncrease") {
+      order.target.forEach((target) => {
+        newProducts[target].price += 100;
+      });
+    }
     setProducts(newProducts);
   };
 
@@ -101,8 +108,42 @@ const VendingMachine = () => {
     const newCounter = JSON.parse(JSON.stringify(counter));
     newCounter.user.sort((a, b) => b[1] - a[1]);
     newCounter.product.sort((a, b) => b[1] - a[1]);
-    setCounter(newCounter);
+    const newUserRanking = assignRank(newCounter.user);
+    const newProductRanking = assignRank(newCounter.product);
+    setUserRanking(newUserRanking);
+    setProductRanking(newProductRanking);
+    pickBestProduct(newProductRanking);
   };
+  const assignRank = (targetCounter) => {
+    const ranking = [];
+    let rank = 1;
+    let amount = targetCounter[0][1];
+    let sameCount = 0;
+    for (let i = 0; i < targetCounter.length; i++) {
+      if (amount !== targetCounter[i][1]) {
+        rank += sameCount;
+        amount = targetCounter[i][1];
+        sameCount = 0;
+      }
+      sameCount++;
+      ranking.push({
+        rank,
+        id: targetCounter[i][2],
+        name: targetCounter[i][0],
+        amount: targetCounter[i][1],
+      });
+    }
+    return ranking;
+  };
+  const pickBestProduct = (newProductRanking) => {
+    const bestProduct = [];
+    for (let i = 0; i < newProductRanking.length; i++) {
+      if (newProductRanking[i].rank !== 1) break;
+      bestProduct.push(newProductRanking[i].id);
+    }
+    productsUpdate({ name: "priceIncrease", target: bestProduct });
+  };
+
   useEffect(() => {
     if (products.length) {
       const productsObj = JSON.stringify(products);
@@ -201,30 +242,27 @@ const VendingMachine = () => {
             </div>
             <div>
               <div className="calculate-title">상품 순위</div>
-              <div className="product-rank__container">
-                {counter.product.map((rank, index) => {
-                  return (
-                    <div key={index}>
-                      <div className="rank-grade">{index + 1}위</div>
-                      <div className="rank-name">{rank[0]}</div>
-                      <div className="rank-amount">{rank[1]}개 판매</div>
-                    </div>
-                  );
-                })}
+              <div className="product-ranking__container">
+                {productRanking.map((ranking, index) => (
+                  <div key={index}>
+                    <div className="ranking-grade">{ranking.rank}위</div>
+                    <div className="ranking-name">{ranking.name}</div>
+                    <div className="ranking-amount">{ranking.amount}개 판매</div>
+                    {ranking.rank === 1 ? <div className="ranking-best">🎉베스트 상품</div> : null}
+                  </div>
+                ))}
               </div>
             </div>
             <div>
               <div className="calculate-title">이용자 순위</div>
-              <div className="user-rank__container">
-                {counter.user.map((rank, index) => {
-                  return (
-                    <div key={index}>
-                      <div className="rank-grade">{index + 1}위</div>
-                      <div className="rank-name">{rank[0]}</div>
-                      <div className="rank-amount">{rank[1]}회 이용</div>
-                    </div>
-                  );
-                })}
+              <div className="user-ranking__container">
+                {userRanking.map((ranking, index) => (
+                  <div key={index}>
+                    <div className="ranking-grade">{ranking.rank}위</div>
+                    <div className="ranking-name">{ranking.name}</div>
+                    <div className="ranking-amount">{ranking.amount}회 이용</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

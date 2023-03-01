@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import * as xlsx from "xlsx";
 import useUsers from "../hooks/useUsers";
 import Product from "./Product";
 import ProductForm from "./ProductForm";
@@ -71,8 +72,9 @@ const VendingMachine = () => {
     const minute = String(currentDate.getMinutes()).padStart(2, "0");
     newPurchaseDetails.push({
       id: purchaseDetails.length + 1,
-      user: currentUser,
-      product: currentProduct,
+      userName: currentUser.name,
+      productName: currentProduct.name,
+      sale: currentProduct.price,
       time: `${year}/${month}/${date} ${hour}:${minute}`,
     });
     setPurchaseDetails(newPurchaseDetails);
@@ -142,6 +144,19 @@ const VendingMachine = () => {
       bestProduct.push(newProductRanking[i].id);
     }
     productsUpdate({ name: "priceIncrease", target: bestProduct });
+  };
+
+  const getExcel = () => {
+    const book = xlsx.utils.book_new();
+    const sheet = [["판매 시간", "판매 상품", "매출"]];
+    purchaseDetails.forEach((purchaseDetail) => {
+      sheet.push([purchaseDetail.time, purchaseDetail.productName, purchaseDetail.sale]);
+    });
+    const sales = xlsx.utils.aoa_to_sheet(sheet);
+    sales["!cols"] = [{ wpx: 130 }, { wpx: 130 }, { wpx: 100 }];
+    xlsx.utils.book_append_sheet(book, sales, "");
+
+    xlsx.writeFile(book, "매출내역.xlsx");
   };
 
   useEffect(() => {
@@ -230,7 +245,7 @@ const VendingMachine = () => {
         return (
           <div className="calculate__container">
             <div className="owner-menus__container">
-              <button>정산</button>
+              <button onClick={getExcel}>정산</button>
             </div>
             <div>
               <div className="calculate-title">구매내역</div>

@@ -159,6 +159,11 @@ const VendingMachine = () => {
     xlsx.writeFile(book, "매출내역.xlsx");
   };
 
+  const restart = () => {
+    setStep("running");
+    userUpdate({ name: "restart", money: 10000 });
+  };
+
   useEffect(() => {
     if (products.length) {
       const productsObj = JSON.stringify(products);
@@ -246,6 +251,7 @@ const VendingMachine = () => {
           <div className="calculate__container">
             <div className="owner-menus__container">
               <button onClick={getExcel}>정산</button>
+              <button onClick={restart}>재시작</button>
             </div>
             <div>
               <div className="calculate-title">구매내역</div>

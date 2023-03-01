@@ -24,6 +24,11 @@ const useUsers = () => {
         purchaseTime: new Date(),
       });
     }
+    if (order.name === "restart") {
+      for (let i = 1; i < newUsers.length; i++) {
+        newUsers[i].wallet += order.money;
+      }
+    }
     setUsers(newUsers);
   };
 
@@ -34,6 +39,13 @@ const useUsers = () => {
       });
     });
   }, []);
+
+  useEffect(() => {
+    if (users.length > 1) {
+      const usersObj = JSON.stringify(users);
+      window.localStorage.setItem("user", usersObj);
+    }
+  }, [users]);
 
   return {
     users,

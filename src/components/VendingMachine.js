@@ -12,7 +12,41 @@ const VendingMachine = () => {
 
   const saveProducts = () => {
     setStep("running");
+    vendingMachineTimer();
   };
+
+  const vendingMachineTimer = () => {
+    const currentTime = new Date();
+    const currentMinute = currentTime.getMinutes();
+    const currentSecont = currentTime.getSeconds();
+    const needMinute = 59 - currentMinute; // 초 단위도 빼야 하기 때문에 60초+59분 = 60분
+    const needSecond = 60 - currentSecont;
+    setTimeout(() => {
+      productsUpdate({ name: "initialization" });
+      setInterval(() => productsUpdate({ name: "initialization" }), 3600000);
+    }, needSecond * 1000 + needMinute * 60000);
+  };
+
+  const purchaseProduct = (index) => {
+    const currentProduct = products[index];
+    if (currentMoney >= currentProduct.price && currentProduct.current > 0) {
+      productsUpdate({ name: "sell", index });
+      userUpdate({ name: "log", index: currentUser.id, currentProduct });
+      setCurrentMoney(currentMoney - currentProduct.price);
+    }
+  };
+
+  const productsUpdate = (order) => {
+    const newProducts = [...products];
+    if (order.name === "sell") newProducts[order.index].current -= 1;
+    if (order.name === "initialization") {
+      newProducts.forEach((newProduct) => {
+        if (newProduct.current !== newProduct.amount) newProduct.current = newProduct.amount;
+      });
+    }
+    setProducts(newProducts);
+  };
+
   const injectionMoney = (moneyOption) => {
     userUpdate({ name: "wallet", money: -moneyOption });
     setCurrentMoney(currentMoney + moneyOption);
@@ -20,20 +54,6 @@ const VendingMachine = () => {
   const returnMoney = () => {
     userUpdate({ name: "wallet", money: currentMoney });
     setCurrentMoney(0);
-  };
-
-  const purchaseProduct = (index) => {
-    const currentProduct = products[index];
-    if (currentMoney >= currentProduct.price && currentProduct.current > 0) {
-      sellProduct(index);
-      userUpdate({ name: "log", index: currentUser.id, currentProduct });
-      setCurrentMoney(currentMoney - currentProduct.price);
-    }
-  };
-  const sellProduct = (index) => {
-    const newProducts = [...products];
-    newProducts[index].current -= 1;
-    setProducts(newProducts);
   };
 
   useEffect(() => {

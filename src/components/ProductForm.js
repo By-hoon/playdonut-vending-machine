@@ -31,7 +31,7 @@ const ProductForm = ({ products, setProducts }) => {
     }
   };
   return (
-    <div>
+    <div className="product-form__container">
       <form onSubmit={onSubmit}>
         <div className="name-input__container">
           <div className="input-title">상품 이름</div>

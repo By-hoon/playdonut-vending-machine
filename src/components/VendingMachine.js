@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import ProductForm from "./ProductForm";
+import useUsers from "../hooks/useUsers";
 import Product from "./Product";
+import ProductForm from "./ProductForm";
 
 const VendingMachine = () => {
   const [step, setStep] = useState("setting");
   const [products, setProducts] = useState([]);
+  const { users, setUsers, currentUser, appear, appearChanger, userChange } = useUsers();
 
   const saveProducts = () => {
     setStep("running");
@@ -37,8 +39,16 @@ const VendingMachine = () => {
       }
       case "running": {
         return (
-          <div>run</div>
-          // 각 사용자 별 자판기 사용 기능
+          <>
+            {currentUser.name === "나사장" ? (
+              <div className="owner-menus__container">
+                <button>정산완료</button>
+                <button>정산</button>
+              </div>
+            ) : (
+              <div className="user-wallet">지갑: {currentUser.wallet}원</div>
+            )}
+          </>
         );
       }
       default:
@@ -46,7 +56,26 @@ const VendingMachine = () => {
     }
   };
 
-  return <div>{Render()}</div>;
+  return (
+    <div>
+      <div className="user__container">
+        <div className="current-user">{currentUser.name}</div>
+        <button onClick={appearChanger} disabled={step === "setting"}>
+          사용자 변경
+        </button>
+        {appear ? (
+          <div className="user-changer__container">
+            {users.map((user) => (
+              <div className="user-option" key={user.id} onClick={() => userChange(user)}>
+                {user.name}
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+      {Render()}
+    </div>
+  );
 };
 
 export default VendingMachine;

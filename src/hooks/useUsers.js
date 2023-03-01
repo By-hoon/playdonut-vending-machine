@@ -14,14 +14,16 @@ const useUsers = () => {
     setAppear(false);
   };
 
-  const walletDecrease = (money) => {
+  const userUpdate = (order) => {
     const newUsers = [...users];
-    newUsers[currentUser.id].wallet -= money;
-    setUsers(newUsers);
-  };
-  const walletIncrease = (money) => {
-    const newUsers = [...users];
-    newUsers[currentUser.id].wallet += money;
+    if (order.name === "wallet") newUsers[currentUser.id].wallet += order.money;
+    if (order.name === "log") {
+      const targetUser = newUsers[order.index];
+      targetUser.purchaseDetails.push({
+        productDetail: order.currentProduct,
+        purchaseTime: new Date(),
+      });
+    }
     setUsers(newUsers);
   };
 
@@ -40,8 +42,7 @@ const useUsers = () => {
     appear,
     appearChanger,
     userChange,
-    walletDecrease,
-    walletIncrease,
+    userUpdate,
   };
 };
 

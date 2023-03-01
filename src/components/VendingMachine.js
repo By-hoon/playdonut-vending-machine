@@ -2,25 +2,38 @@ import { useState, useEffect } from "react";
 import useUsers from "../hooks/useUsers";
 import Product from "./Product";
 import ProductForm from "./ProductForm";
-import { moneyOptions } from "../shared/Constants";
+import { moneyOptions, MESSAGE } from "../shared/Constants";
 
 const VendingMachine = () => {
   const [step, setStep] = useState("setting");
   const [products, setProducts] = useState([]);
   const [currentMoney, setCurrentMoney] = useState(0);
-  const { users, currentUser, appear, appearChanger, userChange, walletDecrease, walletIncrease } =
-    useUsers();
+  const { users, currentUser, appear, appearChanger, userChange, userUpdate } = useUsers();
 
   const saveProducts = () => {
     setStep("running");
   };
   const injectionMoney = (moneyOption) => {
-    walletDecrease(moneyOption);
+    userUpdate({ name: "wallet", money: -moneyOption });
     setCurrentMoney(currentMoney + moneyOption);
   };
   const returnMoney = () => {
-    walletIncrease(currentMoney);
+    userUpdate({ name: "wallet", money: currentMoney });
     setCurrentMoney(0);
+  };
+
+  const purchaseProduct = (index) => {
+    const currentProduct = products[index];
+    if (currentMoney >= currentProduct.price && currentProduct.current > 0) {
+      sellProduct(index);
+      userUpdate({ name: "log", index: currentUser.id, currentProduct });
+      setCurrentMoney(currentMoney - currentProduct.price);
+    }
+  };
+  const sellProduct = (index) => {
+    const newProducts = [...products];
+    newProducts[index].current -= 1;
+    setProducts(newProducts);
   };
 
   useEffect(() => {
@@ -82,6 +95,27 @@ const VendingMachine = () => {
                 </div>
               </div>
             )}
+            <div className="products__container">
+              {products.map((product, index) => (
+                <div key={product.id} className="product-sell__container">
+                  <Product product={product} />
+                  <div className="purchase-button__container">
+                    <button
+                      className="purchase__button"
+                      onClick={() => purchaseProduct(index)}
+                      disabled={currentUser.name === "나사장"}
+                    >
+                      구매
+                    </button>
+                  </div>
+                  {product.current === 0 ? (
+                    <div className="sold-out__container">
+                      <span>{MESSAGE.SOLDOUT}</span>
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+            </div>
           </div>
         );
       }

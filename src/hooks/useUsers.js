@@ -14,10 +14,21 @@ const useUsers = () => {
     setAppear(false);
   };
 
+  const walletDecrease = (money) => {
+    const newUsers = [...users];
+    newUsers[currentUser.id].wallet -= money;
+    setUsers(newUsers);
+  };
+  const walletIncrease = (money) => {
+    const newUsers = [...users];
+    newUsers[currentUser.id].wallet += money;
+    setUsers(newUsers);
+  };
+
   useEffect(() => {
     userNames.forEach((userName, index) => {
       setUsers((newUsers) => {
-        return [...newUsers, { id: index, name: userName, wallet: 10000, purchaseDetails: [] }];
+        return [...newUsers, { id: index + 1, name: userName, wallet: 10000, purchaseDetails: [] }];
       });
     });
   }, []);
@@ -29,6 +40,8 @@ const useUsers = () => {
     appear,
     appearChanger,
     userChange,
+    walletDecrease,
+    walletIncrease,
   };
 };
 

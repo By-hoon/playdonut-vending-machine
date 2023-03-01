@@ -2,14 +2,25 @@ import { useState, useEffect } from "react";
 import useUsers from "../hooks/useUsers";
 import Product from "./Product";
 import ProductForm from "./ProductForm";
+import { moneyOptions } from "../shared/Constants";
 
 const VendingMachine = () => {
   const [step, setStep] = useState("setting");
   const [products, setProducts] = useState([]);
-  const { users, setUsers, currentUser, appear, appearChanger, userChange } = useUsers();
+  const [currentMoney, setCurrentMoney] = useState(0);
+  const { users, currentUser, appear, appearChanger, userChange, walletDecrease, walletIncrease } =
+    useUsers();
 
   const saveProducts = () => {
     setStep("running");
+  };
+  const injectionMoney = (moneyOption) => {
+    walletDecrease(moneyOption);
+    setCurrentMoney(currentMoney + moneyOption);
+  };
+  const returnMoney = () => {
+    walletIncrease(currentMoney);
+    setCurrentMoney(0);
   };
 
   useEffect(() => {
@@ -39,16 +50,39 @@ const VendingMachine = () => {
       }
       case "running": {
         return (
-          <>
+          <div className="purchase__container">
             {currentUser.name === "나사장" ? (
               <div className="owner-menus__container">
                 <button>정산완료</button>
                 <button>정산</button>
               </div>
             ) : (
-              <div className="user-wallet">지갑: {currentUser.wallet}원</div>
+              <div>
+                <div className="user-wallet">지갑: {currentUser.wallet}원</div>
+                <div className="injection-money__container">
+                  <div>
+                    <div className="injection-money-title">투입된 금액</div>
+                    <div className="current-money">{currentMoney}원</div>
+                  </div>
+                  <div>
+                    {moneyOptions.map((moneyOption) => (
+                      <button
+                        key={moneyOption}
+                        className="money-option"
+                        onClick={() => injectionMoney(moneyOption)}
+                        disabled={moneyOption > currentUser.wallet}
+                      >
+                        +{moneyOption}원
+                      </button>
+                    ))}
+                    <button className="return-money" onClick={returnMoney}>
+                      반환
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
-          </>
+          </div>
         );
       }
       default:

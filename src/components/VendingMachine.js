@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useProducts from "../hooks/useProducts";
 import useUsers from "../hooks/useUsers";
+import usePurchaseDetails from "../hooks/usePurchaseDetails";
 import Product from "./Product";
 import ProductForm from "./ProductForm";
 import CalculateList from "./CalculateList";
@@ -12,17 +13,17 @@ import { getExcel } from "../utils/Util";
 const VendingMachine = () => {
   const [step, setStep] = useState("setting");
   const [currentMoney, setCurrentMoney] = useState(0);
-  const [purchaseDetails, setPurchaseDetails] = useState([]);
-  const [counter, setCounter] = useState({ user: [], product: [] });
   const [userRanking, setUserRanking] = useState([]);
   const [productRanking, setProductRanking] = useState([]);
   const { products, setProducts, productsUpdate } = useProducts();
   const { users, currentUser, appear, appearChanger, userChange, userUpdate } = useUsers();
+  const { purchaseDetails, counter, counterInitialization, updateCounter, updatePurchaseDetails } =
+    usePurchaseDetails();
 
   const saveProducts = () => {
     setStep("running");
     vendingMachineTimer();
-    counterInitialization();
+    counterInitialization(users, products);
   };
 
   const vendingMachineTimer = () => {
@@ -37,15 +38,13 @@ const VendingMachine = () => {
     }, needSecond * 1000 + needMinute * 60000);
   };
 
-  const counterInitialization = () => {
-    const newCounter = JSON.parse(JSON.stringify(counter));
-    users.forEach((user) => {
-      if (user.id !== "owner") newCounter.user[user.id - 1] = [user.name, 0, user.id];
-    });
-    products.forEach((product) => {
-      newCounter.product[product.id] = [product.name, 0, product.id];
-    });
-    setCounter(newCounter);
+  const injectionMoney = (moneyOption) => {
+    userUpdate({ name: "wallet", money: -moneyOption });
+    setCurrentMoney(currentMoney + moneyOption);
+  };
+  const returnMoney = () => {
+    userUpdate({ name: "wallet", money: currentMoney });
+    setCurrentMoney(0);
   };
 
   const purchaseProduct = (index) => {
@@ -54,42 +53,9 @@ const VendingMachine = () => {
       productsUpdate({ name: "sell", index });
       userUpdate({ name: "log", index: currentUser.id, currentProduct });
       setCurrentMoney(currentMoney - currentProduct.price);
-      updatePurchaseDetails(currentProduct);
-      updateCounter(currentProduct);
+      updatePurchaseDetails(currentUser, currentProduct);
+      updateCounter(currentUser, currentProduct);
     }
-  };
-  const updateCounter = (currentProduct) => {
-    const newCounter = JSON.parse(JSON.stringify(counter));
-    newCounter.user[currentUser.id - 1][1]++;
-    newCounter.product[currentProduct.id][1]++;
-    setCounter(newCounter);
-  };
-
-  const updatePurchaseDetails = (currentProduct) => {
-    const newPurchaseDetails = [...purchaseDetails];
-    const currentDate = new Date();
-    const year = String(currentDate.getFullYear());
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const date = String(currentDate.getDate()).padStart(2, "0");
-    const hour = String(currentDate.getHours()).padStart(2, "0");
-    const minute = String(currentDate.getMinutes()).padStart(2, "0");
-    newPurchaseDetails.push({
-      id: purchaseDetails.length + 1,
-      userName: currentUser.name,
-      productName: currentProduct.name,
-      sale: currentProduct.price,
-      time: `${year}/${month}/${date} ${hour}:${minute}`,
-    });
-    setPurchaseDetails(newPurchaseDetails);
-  };
-
-  const injectionMoney = (moneyOption) => {
-    userUpdate({ name: "wallet", money: -moneyOption });
-    setCurrentMoney(currentMoney + moneyOption);
-  };
-  const returnMoney = () => {
-    userUpdate({ name: "wallet", money: currentMoney });
-    setCurrentMoney(0);
   };
 
   const doCalculate = () => {

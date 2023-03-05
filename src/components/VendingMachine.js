@@ -3,7 +3,9 @@ import useProducts from "../hooks/useProducts";
 import useUsers from "../hooks/useUsers";
 import Product from "./Product";
 import ProductForm from "./ProductForm";
+import CalculateList from "./CalculateList";
 import PurchaseDetail from "./PurchaseDetail";
+import RankingDetail from "./RankingDetail";
 import { moneyOptions, MESSAGE } from "../shared/Constants";
 import { getExcel } from "../utils/Util";
 
@@ -228,39 +230,41 @@ const VendingMachine = () => {
               <button onClick={restart}>재시작</button>
             </div>
             <div className="calculate-lists__container">
-              <div>
-                <div className="calculate-title">구매내역</div>
-                <div className="product-details__container">
-                  {purchaseDetails.map((purchaseDetail) => (
-                    <PurchaseDetail key={purchaseDetail.id} purchaseDetail={purchaseDetail} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="calculate-title">상품 순위</div>
-                <div className="product-ranking__container">
-                  {productRanking.map((ranking, index) => (
-                    <div key={index}>
-                      <div className="ranking-grade">{ranking.rank}위</div>
-                      <div className="ranking-name">{ranking.name}</div>
-                      <div className="ranking-amount">{ranking.amount}개 판매</div>
-                      {ranking.rank === 1 ? <div className="ranking-best">🎉베스트 상품</div> : null}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="calculate-title">이용자 순위</div>
-                <div className="user-ranking__container">
-                  {userRanking.map((ranking, index) => (
-                    <div key={index}>
-                      <div className="ranking-grade">{ranking.rank}위</div>
-                      <div className="ranking-name">{ranking.name}</div>
-                      <div className="ranking-amount">{ranking.amount}회 이용</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <CalculateList
+                title={"구매내역"}
+                list={
+                  <>
+                    {purchaseDetails.map((purchaseDetail) => (
+                      <PurchaseDetail key={purchaseDetail.id} purchaseDetail={purchaseDetail} />
+                    ))}
+                  </>
+                }
+              />
+              <CalculateList
+                title={"상품 순위"}
+                list={
+                  <>
+                    {productRanking.map((ranking, index) => (
+                      <div key={index} className="ranking-detail__container">
+                        <RankingDetail ranking={ranking} />
+                        {ranking.rank === 1 ? <div className="ranking-best">🎉베스트 상품</div> : null}
+                      </div>
+                    ))}
+                  </>
+                }
+              />
+              <CalculateList
+                title={"이용자 순위"}
+                list={
+                  <>
+                    {userRanking.map((ranking, index) => (
+                      <div key={index} className="ranking-detail__container">
+                        <RankingDetail ranking={ranking} />
+                      </div>
+                    ))}
+                  </>
+                }
+              />
             </div>
           </div>
         );

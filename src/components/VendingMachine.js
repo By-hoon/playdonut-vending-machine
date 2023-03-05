@@ -1,11 +1,11 @@
 import { useState } from "react";
-import * as xlsx from "xlsx";
 import useProducts from "../hooks/useProducts";
 import useUsers from "../hooks/useUsers";
 import Product from "./Product";
 import ProductForm from "./ProductForm";
 import PurchaseDetail from "./PurchaseDetail";
 import { moneyOptions, MESSAGE } from "../shared/Constants";
+import { getExcel } from "../utils/Util";
 
 const VendingMachine = () => {
   const [step, setStep] = useState("setting");
@@ -131,17 +131,12 @@ const VendingMachine = () => {
     productsUpdate({ name: "priceIncrease", target: bestProduct });
   };
 
-  const getExcel = () => {
-    const book = xlsx.utils.book_new();
+  const requestExcel = () => {
     const sheet = [["판매 시간", "판매 상품", "매출"]];
     purchaseDetails.forEach((purchaseDetail) => {
       sheet.push([purchaseDetail.time, purchaseDetail.productName, purchaseDetail.sale]);
     });
-    const sales = xlsx.utils.aoa_to_sheet(sheet);
-    sales["!cols"] = [{ wpx: 130 }, { wpx: 130 }, { wpx: 100 }];
-    xlsx.utils.book_append_sheet(book, sales, "");
-
-    xlsx.writeFile(book, "매출내역.xlsx");
+    getExcel(sheet);
   };
 
   const restart = () => {
@@ -229,7 +224,7 @@ const VendingMachine = () => {
         return (
           <div className="calculate__container">
             <div className="owner-menus__container">
-              <button onClick={getExcel}>정산</button>
+              <button onClick={requestExcel}>정산</button>
               <button onClick={restart}>재시작</button>
             </div>
             <div className="calculate-lists__container">

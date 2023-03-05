@@ -7,11 +7,11 @@ import ProductForm from "./ProductForm";
 import CalculateList from "./CalculateList";
 import PurchaseDetail from "./PurchaseDetail";
 import RankingDetail from "./RankingDetail";
-import { moneyOptions, MESSAGE } from "../shared/Constants";
+import { SETTING, VMSTEP, ORDER, moneyOptions, MESSAGE } from "../shared/Constants";
 import { getExcel } from "../utils/Util";
 
 const VendingMachine = () => {
-  const [step, setStep] = useState("setting");
+  const [step, setStep] = useState(VMSTEP.SETTING);
   const [currentMoney, setCurrentMoney] = useState(0);
   const [userRanking, setUserRanking] = useState([]);
   const [productRanking, setProductRanking] = useState([]);
@@ -20,8 +20,8 @@ const VendingMachine = () => {
   const { purchaseDetails, counter, counterInitialization, updateCounter, updatePurchaseDetails } =
     usePurchaseDetails();
 
-  const saveProducts = () => {
-    setStep("running");
+  const runVendingMachine = () => {
+    setStep(VMSTEP.RUNNING);
     vendingMachineTimer();
     counterInitialization(users, products);
   };
@@ -33,25 +33,25 @@ const VendingMachine = () => {
     const needMinute = 59 - currentMinute; // 초 단위도 빼야 하기 때문에 60초+59분 = 60분
     const needSecond = 60 - currentSecont;
     setTimeout(() => {
-      productsUpdate({ name: "initialization" });
-      setInterval(() => productsUpdate({ name: "initialization" }), 3600000);
+      productsUpdate({ name: ORDER.INITIALIZATION });
+      setInterval(() => productsUpdate({ name: ORDER.INITIALIZATION }), 3600000);
     }, needSecond * 1000 + needMinute * 60000);
   };
 
   const injectionMoney = (moneyOption) => {
-    userUpdate({ name: "wallet", money: -moneyOption });
+    userUpdate({ name: ORDER.WALLET, money: -moneyOption });
     setCurrentMoney(currentMoney + moneyOption);
   };
   const returnMoney = () => {
-    userUpdate({ name: "wallet", money: currentMoney });
+    userUpdate({ name: ORDER.WALLET, money: currentMoney });
     setCurrentMoney(0);
   };
 
   const purchaseProduct = (index) => {
     const currentProduct = products[index];
     if (currentMoney >= currentProduct.price && currentProduct.current > 0) {
-      productsUpdate({ name: "sell", index });
-      userUpdate({ name: "log", index: currentUser.id, currentProduct });
+      productsUpdate({ name: ORDER.SELL, index });
+      userUpdate({ name: ORDER.LOG, index: currentUser.id, currentProduct });
       setCurrentMoney(currentMoney - currentProduct.price);
       updatePurchaseDetails(currentUser, currentProduct);
       updateCounter(currentUser, currentProduct);
@@ -59,15 +59,18 @@ const VendingMachine = () => {
   };
 
   const doCalculate = () => {
-    setStep("calculate");
+    setStep(VMSTEP.CALCULATE);
     const newCounter = JSON.parse(JSON.stringify(counter));
-    newCounter.user.sort((a, b) => b[1] - a[1]);
-    newCounter.product.sort((a, b) => b[1] - a[1]);
-    const newUserRanking = assignRank(newCounter.user);
-    const newProductRanking = assignRank(newCounter.product);
+    const newUserRanking = sortCounter(newCounter.user);
+    const newProductRanking = sortCounter(newCounter.product);
     setUserRanking(newUserRanking);
     setProductRanking(newProductRanking);
     pickBestProduct(newProductRanking);
+  };
+
+  const sortCounter = (targetCounter) => {
+    targetCounter.sort((a, b) => b[1] - a[1]);
+    assignRank(targetCounter);
   };
   const assignRank = (targetCounter) => {
     const ranking = [];
@@ -96,7 +99,7 @@ const VendingMachine = () => {
       if (newProductRanking[i].rank !== 1) break;
       bestProduct.push(newProductRanking[i].id);
     }
-    productsUpdate({ name: "priceIncrease", target: bestProduct });
+    productsUpdate({ name: ORDER.PRICE_INCREASE, target: bestProduct });
   };
 
   const requestExcel = () => {
@@ -108,13 +111,13 @@ const VendingMachine = () => {
   };
 
   const restart = () => {
-    setStep("running");
-    userUpdate({ name: "restart", money: 10000 });
+    setStep(VMSTEP.RUNNING);
+    userUpdate({ name: ORDER.RESTART, money: SETTING.MONEY_SET });
   };
 
   const Render = () => {
     switch (step) {
-      case "setting": {
+      case VMSTEP.SETTING: {
         return (
           <div className="product-set__container">
             <div className="title">상품 목록 설정</div>
@@ -124,13 +127,13 @@ const VendingMachine = () => {
                 <Product key={product.id} product={product} />
               ))}
             </div>
-            <button className="product-set__button" onClick={saveProducts}>
+            <button className="product-set__button" onClick={runVendingMachine}>
               설정 완료
             </button>
           </div>
         );
       }
-      case "running": {
+      case VMSTEP.RUNNING: {
         return (
           <div className="purchase__container">
             <div className="title">자판기 이용</div>
@@ -188,7 +191,7 @@ const VendingMachine = () => {
           </div>
         );
       }
-      case "calculate": {
+      case VMSTEP.CALCULATE: {
         return (
           <div className="calculate__container">
             <div className="owner-menus__container">
@@ -244,7 +247,7 @@ const VendingMachine = () => {
     <div>
       <div className="user__container">
         <div className="current-user">{currentUser.name}</div>
-        <button onClick={appearChanger} disabled={step === "setting"}>
+        <button onClick={appearChanger} disabled={step === VMSTEP.SETTING}>
           사용자 변경
         </button>
         {appear ? (

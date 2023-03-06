@@ -1,0 +1,15 @@
+.product-form__container {
+  padding: 5px;
+}
+.name-input__container,
+.price-input__container,
+.amount-input__container,
+.submit__container {
+  display: flex;
+  justify-content: space-between;
+  width: 280px;
+  padding: 10px;
+}
+.submit-input {
+  margin: 0 auto;
+}

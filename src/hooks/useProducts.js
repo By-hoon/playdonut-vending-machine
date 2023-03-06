@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
+import { SETTING, ORDER } from "../shared/Constants";
 
 const useProducts = () => {
   const [products, setProducts] = useState([]);
 
   const productsUpdate = (order) => {
     const newProducts = [...products];
-    if (order.name === "sell") newProducts[order.index].current -= 1;
-    if (order.name === "initialization") {
+    if (order.name === ORDER.SELL) newProducts[order.index].current -= 1;
+    if (order.name === ORDER.INITIALIZATION) {
       newProducts.forEach((newProduct) => {
         if (newProduct.current !== newProduct.amount) newProduct.current = newProduct.amount;
       });
     }
-    if (order.name === "priceIncrease") {
+    if (order.name === ORDER.PRICE_INCREASE) {
       order.target.forEach((target) => {
-        newProducts[target].price += 100;
+        newProducts[target].price += SETTING.PRICE_INCREASE;
       });
     }
     setProducts(newProducts);
@@ -22,7 +23,7 @@ const useProducts = () => {
   useEffect(() => {
     if (products.length) {
       const productsObj = JSON.stringify(products);
-      window.localStorage.setItem("product", productsObj);
+      window.localStorage.setItem(SETTING.PRODUCTS_KEY, productsObj);
     }
   }, [products]);
 

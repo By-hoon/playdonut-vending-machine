@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { memo, useState, useCallback } from "react";
 
 const ProductForm = ({ products, setProducts }) => {
   const [id, setId] = useState(0);
@@ -9,11 +9,20 @@ const ProductForm = ({ products, setProducts }) => {
     setName(e.target.value);
   }, []);
   const changePrice = useCallback((e) => {
-    setPrice(Number(e.target.value));
+    const newPrice = removeZero(e.target.value);
+    setPrice(newPrice);
   }, []);
   const changeAmount = useCallback((e) => {
-    setAmount(Number(e.target.value));
+    const newAmount = removeZero(e.target.value);
+    setAmount(newAmount);
   }, []);
+
+  const removeZero = (string) => {
+    if (string.slice(0, 1) === "0") {
+      return string.slice(1, string.length);
+    }
+    return string;
+  };
 
   const isValid = () => {
     if (name === "") {
@@ -26,7 +35,7 @@ const ProductForm = ({ products, setProducts }) => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (isValid()) {
-      setProducts([...products, { id, name, price, current: amount, amount }]);
+      setProducts([...products, { id, name, price: Number(price), current: amount, amount }]);
       setId(id + 1);
     }
   };
@@ -46,11 +55,11 @@ const ProductForm = ({ products, setProducts }) => {
           <input type="number" placeholder="상품 수량" min={1} onChange={changeAmount} value={amount} />
         </div>
         <div className="submit__container">
-          <input type="submit" value="등록하기" />
+          <input className="submit-input" type="submit" value="등록하기" />
         </div>
       </form>
     </div>
   );
 };
 
-export default ProductForm;
+export default memo(ProductForm);

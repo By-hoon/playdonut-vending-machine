@@ -1,0 +1,16 @@
+.ranking-grade,
+.ranking-name,
+.ranking-amount {
+  margin: 0 2px;
+  overflow: hidden;
+}
+
+.ranking-grade {
+  width: 30px;
+}
+.ranking-name {
+  width: 100px;
+}
+.ranking-amount {
+  width: 80px;
+}

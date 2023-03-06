@@ -1,0 +1,73 @@
+.user__container {
+  position: relative;
+  display: flex;
+  width: 200px;
+  justify-content: space-between;
+  padding: 10px;
+}
+.user-changer__container {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  height: 40px;
+  background-color: beige;
+}
+.user-option {
+  cursor: pointer;
+  padding: 3px;
+  border: 1px solid black;
+}
+
+.title {
+  padding: 10px;
+  width: 300px;
+  border-bottom: 1px solid gray;
+}
+
+.product-set__container {
+  padding: 10px;
+}
+
+.products__container {
+  width: 400px;
+  margin: 5px 0;
+}
+
+.product-set__button {
+  margin-top: 10px;
+}
+
+.owner-menus__container {
+  display: flex;
+  width: 120px;
+  justify-content: space-between;
+  margin: 10px;
+}
+.user-menus__container {
+  padding: 10px;
+}
+.current-money__container {
+  display: flex;
+  margin: 5px 0;
+}
+.money-option {
+  margin: 0 5px;
+}
+.product-sell__container {
+  display: flex;
+  margin: 5px 0;
+}
+
+.calculate-lists__container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.ranking-detail__container {
+  display: flex;
+}

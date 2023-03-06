@@ -1,0 +1,14 @@
+.product__container {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+.product__name {
+  width: 100px;
+}
+.product__price {
+  width: 150px;
+}
+.product__current {
+  width: 80px;
+}

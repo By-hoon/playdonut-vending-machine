@@ -46,7 +46,7 @@ const ProductForm = ({ products, setProducts }) => {
           <input type="number" placeholder="상품 수량" min={1} onChange={changeAmount} value={amount} />
         </div>
         <div className="submit__container">
-          <input type="submit" value="등록하기" />
+          <input className="submit-input" type="submit" value="등록하기" />
         </div>
       </form>
     </div>

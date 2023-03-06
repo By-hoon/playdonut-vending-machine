@@ -145,8 +145,8 @@ const VendingMachine = () => {
               <div className="user-menus__container">
                 <div className="user-wallet">지갑: {currentUser.wallet}원</div>
                 <div className="injection-money__container">
-                  <div>
-                    <div className="injection-money-title">투입된 금액</div>
+                  <div className="current-money__container">
+                    <div className="current-money-title">투입된 금액</div>
                     <div className="current-money">{currentMoney}원</div>
                   </div>
                   <div>

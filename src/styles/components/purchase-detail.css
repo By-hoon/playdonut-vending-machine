@@ -1,0 +1,21 @@
+.purchase-detail__container {
+  display: flex;
+}
+.purchase-detail-id,
+.purchase-detail-time,
+.purchase-detail-user,
+.purchase-detail-product {
+  margin: 0 2px;
+  overflow: hidden;
+}
+
+.purchase-detail-id {
+  width: 25px;
+}
+.purchase-detail-time {
+  width: 140px;
+}
+.purchase-detail-user,
+.purchase-detail-product {
+  width: 100px;
+}

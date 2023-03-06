@@ -10,6 +10,7 @@ export const VMSTEP = {
 export const SETTING = {
   PRODUCTS_KEY: "products",
   USERS_KEY: "users",
+  PURCHASE_DETAILS_KEY: "purchase-details",
   MONEY_SET: 10000,
   PRICE_INCREASE: 100,
 };

@@ -45,8 +45,8 @@ const useUsers = () => {
 
   useEffect(() => {
     if (users.length > 1) {
-      const usersObj = JSON.stringify(users);
-      window.localStorage.setItem(SETTING.USERS_KEY, usersObj);
+      const usersString = JSON.stringify(users);
+      window.localStorage.setItem(SETTING.USERS_KEY, usersString);
     }
   }, [users]);
 

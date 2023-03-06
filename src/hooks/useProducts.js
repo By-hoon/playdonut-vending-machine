@@ -22,8 +22,8 @@ const useProducts = () => {
 
   useEffect(() => {
     if (products.length) {
-      const productsObj = JSON.stringify(products);
-      window.localStorage.setItem(SETTING.PRODUCTS_KEY, productsObj);
+      const productsString = JSON.stringify(products);
+      window.localStorage.setItem(SETTING.PRODUCTS_KEY, productsString);
     }
   }, [products]);
 

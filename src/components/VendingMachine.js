@@ -70,7 +70,7 @@ const VendingMachine = () => {
 
   const sortCounter = (targetCounter) => {
     targetCounter.sort((a, b) => b[1] - a[1]);
-    assignRank(targetCounter);
+    return assignRank(targetCounter);
   };
   const assignRank = (targetCounter) => {
     const ranking = [];

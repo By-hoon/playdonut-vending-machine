@@ -172,19 +172,20 @@ const VendingMachine = () => {
                 <div key={product.id} className="product-sell__container">
                   <Product product={product} />
                   <div className="purchase-button__container">
-                    <button
-                      className="purchase__button"
-                      onClick={() => purchaseProduct(index)}
-                      disabled={currentUser.name === "나사장"}
-                    >
-                      구매
-                    </button>
+                    {product.current === 0 ? (
+                      <div className="sold-out__container">
+                        <span>{MESSAGE.SOLDOUT}</span>
+                      </div>
+                    ) : (
+                      <button
+                        className="purchase__button"
+                        onClick={() => purchaseProduct(index)}
+                        disabled={currentUser.name === "나사장"}
+                      >
+                        구매
+                      </button>
+                    )}
                   </div>
-                  {product.current === 0 ? (
-                    <div className="sold-out__container">
-                      <span>{MESSAGE.SOLDOUT}</span>
-                    </div>
-                  ) : null}
                 </div>
               ))}
             </div>

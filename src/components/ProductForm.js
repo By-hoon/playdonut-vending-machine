@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { memo, useState, useCallback } from "react";
 
 const ProductForm = ({ products, setProducts }) => {
   const [id, setId] = useState(0);
@@ -53,4 +53,4 @@ const ProductForm = ({ products, setProducts }) => {
   );
 };
 
-export default ProductForm;
+export default memo(ProductForm);

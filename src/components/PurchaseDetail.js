@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 const PurchaseDetail = ({ purchaseDetail }) => {
   return (
     <div className="product-detail__container">
@@ -9,4 +11,4 @@ const PurchaseDetail = ({ purchaseDetail }) => {
   );
 };
 
-export default PurchaseDetail;
+export default memo(PurchaseDetail);

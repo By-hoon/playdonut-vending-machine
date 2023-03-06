@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 const CalculateList = ({ title, list }) => {
   return (
     <div className="calculate-list__container">
@@ -7,4 +9,4 @@ const CalculateList = ({ title, list }) => {
   );
 };
 
-export default CalculateList;
+export default memo(CalculateList);

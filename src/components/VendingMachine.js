@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import useProducts from "../hooks/useProducts";
 import useUsers from "../hooks/useUsers";
 import usePurchaseDetails from "../hooks/usePurchaseDetails";
@@ -247,7 +247,7 @@ const VendingMachine = () => {
     <div>
       <div className="user__container">
         <div className="current-user">{currentUser.name}</div>
-        <button onClick={appearChanger} disabled={step === VMSTEP.SETTING}>
+        <button onClick={appearChanger} disabled={step === VMSTEP.SETTING || step === VMSTEP.CALCULATE}>
           사용자 변경
         </button>
         {appear ? (
@@ -265,4 +265,4 @@ const VendingMachine = () => {
   );
 };
 
-export default VendingMachine;
+export default memo(VendingMachine);

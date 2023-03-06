@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 const RankingDetail = ({ ranking }) => {
   return (
     <>
@@ -8,4 +10,4 @@ const RankingDetail = ({ ranking }) => {
   );
 };
 
-export default RankingDetail;
+export default memo(RankingDetail);

@@ -1,8 +1,15 @@
 import { useState } from "react";
+import { SETTING } from "../shared/Constants";
 
 const usePurchaseDetails = () => {
   const [purchaseDetails, setPurchaseDetails] = useState([]);
   const [counter, setCounter] = useState({ user: [], product: [] });
+
+  const Initialization = () => {
+    savePrevious();
+    setPurchaseDetails([]);
+    setCounter({ user: [], product: [] });
+  };
 
   const counterInitialization = (users, products) => {
     const newCounter = JSON.parse(JSON.stringify(counter));
@@ -40,7 +47,21 @@ const usePurchaseDetails = () => {
     setPurchaseDetails(newPurchaseDetails);
   };
 
-  return { purchaseDetails, counter, counterInitialization, updateCounter, updatePurchaseDetails };
+  const savePrevious = () => {
+    const purchaseDetailsString = window.localStorage.getItem(SETTING.PURCHASE_DETAILS_KEY);
+    const purchaseDetailsObj = JSON.parse(purchaseDetailsString) || {};
+    purchaseDetailsObj[new Date()] = purchaseDetails;
+    window.localStorage.setItem(SETTING.PURCHASE_DETAILS_KEY, JSON.stringify(purchaseDetailsObj));
+  };
+
+  return {
+    purchaseDetails,
+    counter,
+    counterInitialization,
+    updateCounter,
+    updatePurchaseDetails,
+    Initialization,
+  };
 };
 
 export default usePurchaseDetails;

@@ -17,8 +17,14 @@ const VendingMachine = () => {
   const [productRanking, setProductRanking] = useState([]);
   const { products, setProducts, productsUpdate } = useProducts();
   const { users, currentUser, appear, appearChanger, userChange, userUpdate } = useUsers();
-  const { purchaseDetails, counter, counterInitialization, updateCounter, updatePurchaseDetails } =
-    usePurchaseDetails();
+  const {
+    purchaseDetails,
+    counter,
+    counterInitialization,
+    updateCounter,
+    updatePurchaseDetails,
+    Initialization,
+  } = usePurchaseDetails();
 
   const runVendingMachine = () => {
     setStep(VMSTEP.RUNNING);
@@ -113,6 +119,8 @@ const VendingMachine = () => {
   const restart = () => {
     setStep(VMSTEP.RUNNING);
     userUpdate({ name: ORDER.RESTART, money: SETTING.MONEY_SET });
+    Initialization();
+    counterInitialization(users, products);
   };
 
   const Render = () => {
